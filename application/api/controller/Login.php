@@ -41,11 +41,7 @@ class Login extends Cross
                 );
                 $jwt = JWT::encode($token, $key, 'HS256');
                 $result['token'] = $jwt;
-
-
-
                 $result ['rights'] = $this->getRight($result['id']);;
-
                 $this->response(200,"登录成功",$result);
             }else{
                 $this->response(401,"用户名或者密码错误");
@@ -92,9 +88,9 @@ class Login extends Cross
             }
 
         }
-       if($user_id!=11){
-           array_unshift($firstStepResult, array_pop($firstStepResult));
-       }
+//       if($user_id!=11){
+//           array_unshift($firstStepResult, array_pop($firstStepResult));
+//       }
         return $firstStepResult;
     }
 

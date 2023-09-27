@@ -1,15 +1,17 @@
 <?php
 
 namespace app\api\controller;
-
 use think\Controller;
 use think\Request;
 use app\api\controller\Cross;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
+use Firebase\JWT\SignatureInvalidException;
+use Firebase\JWT\BeforeValidException;
+use Firebase\JWT\ExpiredException;
+use think\Exception;
 class CheckToken extends Cross
 {
-
     protected $user_id;
     protected function initialize()
     {
@@ -27,18 +29,17 @@ class CheckToken extends Cross
             $decoded = JWT::decode($token, $key); //HS256方式，这里要和签发的时候对应
             $arr = (array)$decoded;
             $this->user_id= $arr['user_id'];
-        } catch (Firebase\JWT\SignatureInvalidException $e) { //签名不正确
+        } catch (SignatureInvalidException $e) { //签名不正确
 
-            $this->response(301,"签名不正确");
-        } catch (Firebase\JWT\BeforeValidException $e) { // 签名在某个时间点之后才能用
-            $this->response(301,"token失效");
+            $this->response(300,"签名不正确");
+        } catch (BeforeValidException $e) { // 签名在某个时间点之后才能用
+            $this->response(301,"登录失效,请重新登录");
 
-        } catch (Firebase\JWT\ExpiredException $e) { // token过期
-            $this->response(301,"token失效");
+        } catch (ExpiredException $e) { // token过期
+
+            $this->response(301,"登录失效,请重新登录");
         } catch (Exception $e) { //其他错误
-            $this->response(301,"未知错误");
+            $this->response(300,"未知错误");
         }
-
     }
-
 }
